@@ -9,12 +9,12 @@ int q1[n],q2[n],q3[n];
 int p[n],pro[n],bt[n],at[n],rt[n];
 for(i=0;i<n;i++)
 {
-printf("enter process name for process %d = ",i+1,"\n");
+printf("\n\nEnter process name for process %d = ",i+1,"\n");
 printf("P");
 scanf("%d",&pro[i]);
-printf("enter priority for this process \n");
+printf("\n\nEnter priority for this process ");
 scanf("%d",&p[i]);
-printf("enter burst time for this process \n");
+printf("\n\nEnter burst time for this process ");
 scanf("%d",&bt[i]);
 }
 for(i=0;i<n-1;i++)
@@ -38,17 +38,142 @@ for(i=0;i<n;i++)
 printf("Process P%d",pro[i]);
 printf(" with priority %d",p[i]);
 printf(" has burst time %d",bt[i]);
-printf("\n");
+printf("\n\n");
 }
-printf("\nenter the number of processes you want to process in queue 1 \n");
+printf("\nEnter the number of processes you want to process in queue 1 :\n");
 scanf("%d",&a);
-printf("enter the number of processes you want to process in queue 2 \n");
+printf("Enter the number of processes you want to process in queue 2 :\n");
 scanf("%d",&b);
-printf("enter the number of processes you want to process in queue 3 \n");
+printf("Enter the number of processes you want to process in queue 3 :\n");
 scanf("%d",&c);
 for(i=0;i<a;i++){
 q1[x]=p[i];
 x=x+1;
+}
+printf("_______________________________________________\n");
+printf("|	QUEUE 1		Priority  Burst time  |\n");
+printf("|_____________________________________________|\n");
+for(i=0;i<a;i++){
+printf("	  P%d		   ",pro[i]);
+printf("%d		",p[i]);
+printf("%d\n",bt[i]);
+}
+printf("_______________________________________________\n\n");
+for(i=a;i<b+a;i++){
+q2[x]=p[i];
+x=x+1;
+}
+printf("\n");
+printf("_______________________________________________\n");
+printf("|	QUEUE 2		Priority  Burst time  |\n");
+printf("|_____________________________________________|\n");
+for(i=a;i<b+a;i++){
+printf("	  P%d		   ",pro[i]);
+printf("%d     ",p[i]);
+printf("%d\n",bt[i]);
+}
+printf("_______________________________________________\n\n");
+for(i=b+a;i<c+b+a;i++){
+q3[x]=p[i];
+x=x+1;
+}
+printf("\n");
+printf("_______________________________________________\n");
+printf("|	QUEUE 3		Priority  Burst time  |\n");
+printf("|_____________________________________________|\n");
+for(i=b+a;i<c+a+b;i++){
+printf("	  P%d		   ",pro[i]);
+printf("%d     ",p[i]);
+printf("%d\n",bt[i]);
+}
+printf("_______________________________________________\n");
+printf("\n");
+int tq,t,remain,flag=0;
+int waiting_time=0,turn_time=0;
+remain=a;
+printf("\n\nWELCOME TO QUEUE 1... LETS DO ROUND ROBIN SCHEDULING...\n\n");
+for(i=0;i<a;i++){
+printf("Enter arrival time for P%d =",pro[i]);
+scanf("%d",&at[i]);
+rt[i]=bt[i];
+}
+printf("Enter Time Quantum = ");
+scanf("%d",&tq);
+printf("\n\nProcess\t|Turnaround time|Waiting time\n\n");
+for(t=0,i=0;remain!=0;)
+{
+if(rt[i]<=tq && rt[i]>0)
+{
+t=t+rt[i];
+rt[i]=0;
+flag=1;
+}
+else if(rt[i]>0)
+{
+rt[i]=rt[i]-tq;
+t=t+tq;
+}
+if(rt[i]==0 && flag==1)
+{
+remain--;
+printf("P%d\t|\t%d\t|\t%d\n",i+1,t-at[i],t-at[i]-bt[i]);
+waiting_time=waiting_time+t-at[i]-bt[i];
+turn_time=turn_time+t-at[i];
+flag=0;
+}
+if(i==a-1)
+i=0;
+else if(at[i+1]<=t)
+i++;
+else
+i=0;
+}
+printf("\n\nAverage waiting time= %f sec\n",waiting_time*1.0/a);
+printf("\nAverage turnaround time= %f sec\n",turn_time*1.0/a);
+printf("\n\n-------------------------------------------------------------\n\n");
+printf("\n\nWELCOME TO QUEUE 2... LETUS DO PRIORITY QUEUE SCHEDULING..\n");
+int wtime[n],ttime[n];int avg_wt,avg_tat,total=0;
+wtime[a]=0;
+for(i=a+1;i<b+a;i++){
+wtime[i]=0;
+for(j=a;j<i;j++)
+wtime[i]=wtime[i]+bt[j];
+total=total+wtime[i];
+}
+avg_wt=total*1.0/b;
+total=0;
+printf("\nProcess\t\tBurst Time\tWaiting Time\tTurnaround Time");
+for(i=a;i<b+a;i++)
+{
+ttime[i]=bt[i]+wtime[i];
+total=total+ttime[i];
+printf("\nP%d\t\t%d\t\t%d\t\t%d",i+1,bt[i],wtime[i],ttime[i]);
+}
+avg_tat=total/b;
+printf("\n\nAverage waiting time= %f sec\n",avg_wt*1.0);
+printf("\nAverage turnaround time= %f sec\n",avg_tat*1.0);
+
+printf("\n\n-------------------------------------------------------------\n\n");
+printf("\n\nWelcome to QUEUE 3... let us do FCFS scheduling\n");
+int wt[n],tat[n]; int avwt=0,avtat=0;
+wt[b+a]=0;
+for(i=b+a+1;i<c+a+b;i++){
+wt[i]=0;
+for(j=b+a;j<i;j++)
+wt[i]=wt[i]+bt[j];
+}
+printf("\nProcess\t\tBurst Time\tWaiting Time\tTurnaround Time");
+for(i=b+a;i<b+a+c;i++)
+{
+tat[i]=bt[i]+wt[i];
+avwt=avwt+wt[i];
+avtat=avtat+tat[i];
+printf("\nP%d\t\t%d\t\t%d\t\t%d",i+1,bt[i],wt[i],tat[i]);
+}
+
+printf("\n\nAverage waiting time= %f sec\n",avwt*1.0/c);
+printf("\nAverage turnaround time= %f sec\n",avtat*1.0/c);
+
 }
 
 
